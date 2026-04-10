@@ -33,6 +33,7 @@ export default function ReviewsPage() {
   const [sentiment, setSentiment] = useState('');
   const [category, setCategory] = useState('');
   const [customerClass, setCustomerClass] = useState('');
+  const [marketplace, setMarketplace] = useState('');
 
   const limit = 15;
 
@@ -45,14 +46,14 @@ export default function ReviewsPage() {
   const fetchReviews = useCallback(async (signal?: AbortSignal) => {
     setLoading(true);
     try {
-      const res = await api.getReviews({ search, sentiment, category, customerClass, page, limit });
+      const res = await api.getReviews({ search, sentiment, category, customerClass, marketplace, page, limit });
       if (signal?.aborted) return;
       setReviews(res.reviews);
       setTotal(res.total);
     } finally {
       if (!signal?.aborted) setLoading(false);
     }
-  }, [search, sentiment, category, customerClass, page]);
+  }, [search, sentiment, category, customerClass, marketplace, page]);
 
   useEffect(() => {
     const ctrl = new AbortController();
@@ -126,8 +127,20 @@ export default function ReviewsPage() {
           <option value="problematic">Проблемные</option>
         </select>
 
-        {(searchInput || sentiment || category || customerClass) && (
-          <button className="btn btn-ghost" onClick={() => { setSearchInput(''); setSearch(''); setSentiment(''); setCategory(''); setCustomerClass(''); setPage(1); }}>
+        <select value={marketplace} onChange={(e) => { setMarketplace(e.target.value); setPage(1); }}>
+          <option value="">Все маркетплейсы</option>
+          <option value="Kaspi Магазин">Kaspi Магазин</option>
+          <option value="Wildberries">Wildberries</option>
+          <option value="Ozon">Ozon</option>
+          <option value="SATU.kz">SATU.kz</option>
+          <option value="Flip.kz">Flip.kz</option>
+          <option value="Mechta.kz">Mechta.kz</option>
+          <option value="Arbuz.kz">Arbuz.kz</option>
+          <option value="Другой">Другой</option>
+        </select>
+
+        {(searchInput || sentiment || category || customerClass || marketplace) && (
+          <button className="btn btn-ghost" onClick={() => { setSearchInput(''); setSearch(''); setSentiment(''); setCategory(''); setCustomerClass(''); setMarketplace(''); setPage(1); }}>
             <X size={14} /> Сбросить
           </button>
         )}
@@ -186,6 +199,7 @@ function ReviewCard({ review: r, onAnalyze, analyzing, onDelete, deleting }: {
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={styles.reviewMeta}>
             <span style={{ fontWeight: 600, fontSize: 14 }}>{r.productName}</span>
+            {r.marketplace && <span style={{ fontSize: 12, color: 'var(--accent)', background: 'rgba(99,102,241,0.12)', borderRadius: 6, padding: '2px 8px' }}>{r.marketplace}</span>}
             {r.customerName && <span style={{ color: 'var(--muted)', fontSize: 13 }}>— {r.customerName}</span>}
             <Stars rating={r.starRating} />
             <span style={{ color: 'var(--muted)', fontSize: 12 }}>
@@ -252,7 +266,7 @@ function Stars({ rating }: { rating: number }) {
 }
 
 function AddReviewModal({ onClose, onCreated }: { onClose: () => void; onCreated: () => void }) {
-  const [form, setForm] = useState({ customerName: '', productName: '', starRating: '5', reviewText: '', category: 'quality' });
+  const [form, setForm] = useState({ customerName: '', productName: '', marketplace: '', starRating: '5', reviewText: '', category: 'quality' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -284,6 +298,17 @@ function AddReviewModal({ onClose, onCreated }: { onClose: () => void; onCreated
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <input placeholder="Имя клиента (необязательно)" value={form.customerName} onChange={(e) => set('customerName', e.target.value)} style={{ width: '100%' }} />
           <input placeholder="Название товара *" value={form.productName} onChange={(e) => set('productName', e.target.value)} required style={{ width: '100%' }} />
+          <select value={form.marketplace} onChange={(e) => set('marketplace', e.target.value)} style={{ width: '100%' }}>
+            <option value="">Где куплено? (необязательно)</option>
+            <option value="Kaspi Магазин">Kaspi Магазин</option>
+            <option value="Wildberries">Wildberries</option>
+            <option value="Ozon">Ozon</option>
+            <option value="SATU.kz">SATU.kz</option>
+            <option value="Flip.kz">Flip.kz</option>
+            <option value="Mechta.kz">Mechta.kz</option>
+            <option value="Arbuz.kz">Arbuz.kz</option>
+            <option value="Другой">Другой</option>
+          </select>
           <div style={{ display: 'flex', gap: 10 }}>
             <select value={form.starRating} onChange={(e) => set('starRating', e.target.value)} style={{ flex: 1 }}>
               {[5, 4, 3, 2, 1].map((n) => <option key={n} value={n}>{n} ★</option>)}

@@ -19,6 +19,7 @@ model Review {
   id           String   @id @default(cuid())
   customerName String?
   productName  String
+  marketplace  String?
   starRating   Int
   reviewText   String
   category     String

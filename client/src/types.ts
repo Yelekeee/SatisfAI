@@ -8,6 +8,7 @@ export interface Review {
   id: string;
   customerName: string | null;
   productName: string;
+  marketplace: string | null;
   starRating: number;
   reviewText: string;
   category: string;

@@ -48,7 +48,7 @@ export const api = {
 
   deleteReview: (id: string) => request<void>(`/reviews/${id}`, { method: 'DELETE' }),
 
-  submitFeedback: (data: { customerName?: string; productName: string; starRating: number; reviewText: string; category: string }) =>
+  submitFeedback: (data: { customerName?: string; productName: string; marketplace?: string; starRating: number; reviewText: string; category: string }) =>
     fetch(`${BASE.replace('/api', '')}/api/feedback`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

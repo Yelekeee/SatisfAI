@@ -11,12 +11,13 @@ router.use(authMiddleware);
 
 // GET /api/reviews — list reviews with optional filters
 router.get('/', async (req: AuthRequest, res: Response): Promise<void> => {
-  const { sentiment, category, customerClass, search, page = '1', limit = '20' } = req.query as Record<string, string>;
+  const { sentiment, category, customerClass, marketplace, search, page = '1', limit = '20' } = req.query as Record<string, string>;
 
   const conditions: object[] = [];
   if (sentiment) conditions.push({ aiSentiment: sentiment });
   if (category) conditions.push({ aiCategory: category });
   if (customerClass) conditions.push({ aiCustomerClass: customerClass });
+  if (marketplace) conditions.push({ marketplace });
   if (search) {
     conditions.push({
       OR: [
@@ -76,7 +77,7 @@ router.get('/:id', async (req: AuthRequest, res: Response): Promise<void> => {
 
 // POST /api/reviews — create a review (no auto-analysis, manager triggers manually)
 router.post('/', async (req: AuthRequest, res: Response): Promise<void> => {
-  const { customerName, productName, starRating, reviewText, category } = req.body;
+  const { customerName, productName, marketplace, starRating, reviewText, category } = req.body;
 
   if (!productName || !starRating || !reviewText || !category) {
     res.status(400).json({ error: 'productName, starRating, reviewText, and category are required' });
@@ -84,7 +85,7 @@ router.post('/', async (req: AuthRequest, res: Response): Promise<void> => {
   }
 
   const review = await prisma.review.create({
-    data: { customerName, productName, starRating, reviewText, category },
+    data: { customerName, productName, marketplace, starRating, reviewText, category },
   });
 
   res.status(201).json(review);

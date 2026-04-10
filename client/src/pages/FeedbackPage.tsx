@@ -13,6 +13,7 @@ export default function FeedbackPage() {
   const [form, setForm] = useState({
     customerName: '',
     productName: '',
+    marketplace: '',
     starRating: 5,
     reviewText: '',
     category: 'quality',
@@ -52,7 +53,7 @@ export default function FeedbackPage() {
             <button
               className="btn btn-primary"
               style={{ marginTop: 24, justifyContent: 'center' }}
-              onClick={() => { setDone(false); setForm({ customerName: '', productName: '', starRating: 5, reviewText: '', category: 'quality' }); }}
+              onClick={() => { setDone(false); setForm({ customerName: '', productName: '', marketplace: '', starRating: 5, reviewText: '', category: 'quality' }); }}
             >
               Жаңа пікір / Новый отзыв
             </button>
@@ -90,6 +91,23 @@ export default function FeedbackPage() {
             placeholder="Мысалы: Samsung Galaxy S24"
             style={styles.input}
           />
+
+          <label style={styles.label}>Қайдан сатып алдыңыз? / Где купили? (міндетті емес / необязательно)</label>
+          <select
+            value={form.marketplace}
+            onChange={(e) => set('marketplace', e.target.value)}
+            style={styles.input}
+          >
+            <option value="">Таңдаңыз / Выберите маркетплейс</option>
+            <option value="Kaspi Магазин">Kaspi Магазин</option>
+            <option value="Wildberries">Wildberries</option>
+            <option value="Ozon">Ozon</option>
+            <option value="SATU.kz">SATU.kz</option>
+            <option value="Flip.kz">Flip.kz</option>
+            <option value="Mechta.kz">Mechta.kz</option>
+            <option value="Arbuz.kz">Arbuz.kz</option>
+            <option value="Другой / Басқа">Другой / Басқа</option>
+          </select>
 
           <label style={styles.label}>Баға / Оценка *</label>
           <div style={{ display: 'flex', gap: 8 }}>
